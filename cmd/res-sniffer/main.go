@@ -152,6 +152,13 @@ func runStart(cmd *cobra.Command, args []string) {
 	log.Printf("API docs: http://127.0.0.1:%d/api/status", apiPort)
 	log.Printf("WebSocket: ws://127.0.0.1:%d/ws", apiPort)
 
+	// 在 goroutine 中启动 API 服务器
+	go func() {
+		if err := apiServer.Start(); err != nil {
+			log.Printf("API server error: %v", err)
+		}
+	}()
+
 	// 等待中断信号
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
